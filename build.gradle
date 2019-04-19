@@ -46,7 +46,6 @@ subprojects {
         key = System.getenv('BINTRAY_KEY')
         configurations = ['archives']
         publish = true
-        dryRun = true
         pkg {
             repo = 'maven'
             name = 'grpc-java-jwt'

@@ -3,7 +3,7 @@ services:
   - docker
 
 after_success:
-  - test $TRAVIS_PULL_REQUEST == "false" && test "$TRAVIS_TAG" != "" && test $TRAVIS_REPO_SLUG == "avast/grpc-java-jwt" ./gradlew bintrayUpload -Pversion="$TRAVIS_TAG" --info --no-daemon
+  - test $TRAVIS_PULL_REQUEST == "false" && test "$TRAVIS_TAG" != "" && test $TRAVIS_REPO_SLUG == "avast/grpc-java-jwt" && ./gradlew bintrayUpload -Pversion="$TRAVIS_TAG" --info --no-daemon
 
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

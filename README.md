@@ -16,7 +16,8 @@ Implementation of standard `CallCredentials` ensures that the header is sent, an
 compile "com.avast.grpc:grpc-java-jwt:$latestVersion"
 ````
 
-Please note that artifact are published to [JCenter](https://bintray.com/bintray/jcenter).
+Please note that all artifacts are published to [Avast Bintray respository](https://bintray.com/avast/maven/grpc-java-jwt).
+ Mirroring to [JCenter](https://bintray.com/bintray/jcenter) is pending, so now you have to explicitly add this repository to your project.
 
 ## Keycloak support
 There are implementations of the core interfaces for [Keycloak](https://www.keycloak.org/).

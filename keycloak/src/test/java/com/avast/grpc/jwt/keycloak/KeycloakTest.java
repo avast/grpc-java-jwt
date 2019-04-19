@@ -1,5 +1,7 @@
 package com.avast.grpc.jwt.keycloak;
 
+import static org.junit.Assert.assertEquals;
+
 import com.avast.grpc.jwt.keycloak.client.KeycloakJwtCallCredentials;
 import com.avast.grpc.jwt.keycloak.server.KeycloakJwtServerInterceptor;
 import com.avast.grpc.jwt.test.TestServiceGrpc;
@@ -11,11 +13,8 @@ import io.grpc.Server;
 import io.grpc.ServerInterceptors;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
-import org.junit.Test;
-
 import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class KeycloakTest {
   @Test

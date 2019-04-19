@@ -1,15 +1,14 @@
 package com.avast.grpc.jwt.server;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import com.avast.grpc.jwt.Constants;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class JwtServerInterceptorTest {
 

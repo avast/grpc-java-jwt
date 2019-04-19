@@ -1,0 +1,68 @@
+plugins {
+    id 'com.github.sherter.google-java-format' version '0.8' apply false
+    id 'com.google.protobuf' version '0.8.8' apply false
+    id 'com.avast.gradle.docker-compose' version '0.9.2' apply false
+    id 'com.jfrog.bintray' version '1.8.4' apply false
+}
+
+allprojects {
+    group 'com.avast.grpc'
+    version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
+}
+
+ext {
+    grpcVersion = '1.20.0'
+    protobufVersion = '3.7.1'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'com.jfrog.bintray'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+
+    repositories {
+        mavenCentral()
+    }
+    
+    dependencies {
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.mockito:mockito-core:2.27.0'
+    }
+
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        archiveClassifier = 'sources'
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+        configurations = ['archives']
+        publish = true
+        dryRun = true
+        pkg {
+            repo = 'maven'
+            name = 'grpc-java-jwt'
+            desc = 'Library that helps with authenticated communication in gRPC-Java based applications. It uses JSON Web Token.'
+            userOrg = 'avast'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/avast/grpc-java-jwt.git'
+            websiteUrl = 'https://github.com/avast/grpc-java-jwt'
+            issueTrackerUrl = 'https://github.com/avast/grpc-java-jwt/issues'
+            githubRepo = 'avast/grpc-java-jwt'
+            labels = ['grpc', 'java', 'jwt', 'keycloak']
+            version {
+                name = project.version
+                vcsTag = project.version
+            }
+        }
+    }
+
+}

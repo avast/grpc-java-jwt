@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.avast.grpc.jwt.test;
+
+service TestService {
+    rpc Add (AddParams) returns (AddResponse) {
+    }
+}
+
+message AddParams {
+    int32 a = 1;
+    int32 b = 2;
+}
+
+message AddResponse {
+    int32 sum = 1;
+}

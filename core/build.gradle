@@ -1,0 +1,5 @@
+archivesBaseName = 'grpc-java-jwt'
+
+dependencies {
+    compile "io.grpc:grpc-core:$grpcVersion"    
+}

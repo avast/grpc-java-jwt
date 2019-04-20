@@ -7,13 +7,13 @@ Implementation of standard `CallCredentials` ensures that the header is sent, an
 
 ```maven
 <dependency>
-  <groupId>com.avast.grpc</groupId>
+  <groupId>com.avast.grpc.jwt</groupId>
   <artifactId>grpc-java-jwt</artifactId>
   <version>$latestVersion</version>
 </dependency>
 ```
 ```gradle
-compile "com.avast.grpc:grpc-java-jwt:$latestVersion"
+compile "com.avast.grpc.jwt:grpc-java-jwt:$latestVersion"
 ````
 
 Please note that all artifacts are published to [Avast Bintray respository](https://bintray.com/avast/maven/grpc-java-jwt).
@@ -24,13 +24,13 @@ There are implementations of the core interfaces for [Keycloak](https://www.keyc
 
 ```maven
 <dependency>
-  <groupId>com.avast.grpc</groupId>
+  <groupId>com.avast.grpc.jwt</groupId>
   <artifactId>grpc-java-jwt-keycloak</artifactId>
   <version>$latestVersion</version>
 </dependency>
 ```
 ```gradle
-compile "com.avast.grpc:grpc-java-jwt-keycloak:$latestVersion"
+compile "com.avast.grpc.jwt:grpc-java-jwt-keycloak:$latestVersion"
 ````
 
 ### Client usage

@@ -6,7 +6,7 @@ plugins {
 }
 
 allprojects {
-    group 'com.avast.grpc'
+    group 'com.avast.grpc.jwt'
     version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
 }
 

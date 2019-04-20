@@ -33,6 +33,8 @@ There are implementations of the core interfaces for [Keycloak](https://www.keyc
 compile "com.avast.grpc.jwt:grpc-java-jwt-keycloak:$latestVersion"
 ````
 
+Configuration defaults can be [found here](keycloak/src/main/resources/reference.conf). It uses [HOCON](https://github.com/lightbend/config/blob/master/HOCON.md) and [Lightbend Config](https://github.com/lightbend/config).
+
 ### Client usage
 This ensures that each call contains `Authorization` header with `Bearer ` prefixed Keycloak access token (as JWT).
 ```java

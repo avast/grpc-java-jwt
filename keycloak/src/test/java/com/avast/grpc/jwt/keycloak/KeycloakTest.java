@@ -20,10 +20,9 @@ public class KeycloakTest {
   String channelName = InProcessServerBuilder.generateName();
 
   ManagedChannel clientChannel =
-          InProcessChannelBuilder.forName(channelName).usePlaintext().build();
+      InProcessChannelBuilder.forName(channelName).usePlaintext().build();
 
-  KeycloakJwtServerInterceptor serverInterceptor =
-          KeycloakJwtServerInterceptor.fromConfig(config);
+  KeycloakJwtServerInterceptor serverInterceptor = KeycloakJwtServerInterceptor.fromConfig(config);
   TestServiceImpl service = new TestServiceImpl(serverInterceptor.AccessTokenContextKey);
 
   @Test
@@ -50,14 +49,14 @@ public class KeycloakTest {
     TestServiceGrpc.TestServiceBlockingStub client = TestServiceGrpc.newBlockingStub(clientChannel);
 
     Server server =
-            InProcessServerBuilder.forName(channelName)
-                    .addService(ServerInterceptors.intercept(service, serverInterceptor))
-                    .build()
-                    .start();
+        InProcessServerBuilder.forName(channelName)
+            .addService(ServerInterceptors.intercept(service, serverInterceptor))
+            .build()
+            .start();
 
     try {
       TestServices.AddResponse sum =
-              client.add(TestServices.AddParams.newBuilder().setA(1).setB(2).build());
+          client.add(TestServices.AddParams.newBuilder().setA(1).setB(2).build());
     } catch (StatusRuntimeException e) {
       assertFalse(e.getStatus().isOk());
       assertEquals(Status.UNAUTHENTICATED.getCode(), e.getStatus().getCode());

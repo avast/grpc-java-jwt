@@ -5,8 +5,11 @@ import io.grpc.CallCredentials;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import java.util.concurrent.Executor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class JwtCallCredentials extends CallCredentials {
+  private static Logger LOGGER = LoggerFactory.getLogger(JwtCallCredentials.class);
 
   public static JwtCallCredentials synchronous(SynchronousJwtTokenProvider tokenProvider) {
     return new Synchronous(tokenProvider);
@@ -30,10 +33,9 @@ public abstract class JwtCallCredentials extends CallCredentials {
   }
 
   protected void applyFailure(MetadataApplier applier, Throwable e) {
-    applier.fail(
-        Status.UNAUTHENTICATED
-            .withDescription("An exception when obtaining JWT token")
-            .withCause(e));
+    String msg = "An exception when obtaining JWT token";
+    LOGGER.error(msg, e);
+    applier.fail(Status.UNAUTHENTICATED.withDescription(msg).withCause(e));
   }
 
   public static class Synchronous extends JwtCallCredentials {

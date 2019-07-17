@@ -1,5 +1,6 @@
 archivesBaseName = 'grpc-java-jwt'
 
 dependencies {
-    compile "io.grpc:grpc-core:$grpcVersion"    
+    compile "io.grpc:grpc-core:$grpcVersion"
+    compile "org.slf4j:slf4j-api:1.7.26"
 }

@@ -39,10 +39,12 @@ public class JwtServerInterceptor<T> implements ServerInterceptor {
       token = tokenParser.parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()));
     } catch (Exception e) {
       call.close(
-          Status.UNAUTHENTICATED.withDescription(
-              Constants.AuthorizationMetadataKey.name()
-                  + " header validation failed: "
-                  + e.getMessage()),
+          Status.UNAUTHENTICATED
+              .withDescription(
+                  Constants.AuthorizationMetadataKey.name()
+                      + " header validation failed: "
+                      + e.getMessage())
+              .withCause(e),
           new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }

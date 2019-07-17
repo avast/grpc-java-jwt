@@ -34,18 +34,18 @@ public class JwtServerInterceptor<T> implements ServerInterceptor {
           new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }
+    T token;
     try {
-      T token = tokenParser.parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()));
-      return Contexts.interceptCall(
-          Context.current().withValue(AccessTokenContextKey, token), call, headers, next);
+      token = tokenParser.parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()));
     } catch (Exception e) {
       call.close(
           Status.UNAUTHENTICATED.withDescription(
               Constants.AuthorizationMetadataKey.name()
-                  + " header does not start with "
-                  + AUTH_HEADER_PREFIX),
+                  + " header validation failed: "
+                  + e.getMessage()),
           new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }
+    return Contexts.interceptCall(Context.current().withValue(AccessTokenContextKey, token), call, headers, next);
   }
 }

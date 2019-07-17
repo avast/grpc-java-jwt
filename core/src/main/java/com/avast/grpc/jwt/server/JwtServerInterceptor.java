@@ -46,6 +46,7 @@ public class JwtServerInterceptor<T> implements ServerInterceptor {
           new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }
-    return Contexts.interceptCall(Context.current().withValue(AccessTokenContextKey, token), call, headers, next);
+    return Contexts.interceptCall(
+        Context.current().withValue(AccessTokenContextKey, token), call, headers, next);
   }
 }

@@ -18,6 +18,10 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
   private final PublicKey publicKey;
   private final TokenVerifier.Predicate<AccessToken>[] checks;
 
+  // Optional parameters
+  private String expectedAudience;
+  private String expectedIssuedFor;
+
   protected KeycloakJwtTokenParser(String serverUrl, String realm, PublicKey publicKey) {
     this.publicKey = publicKey;
     String realmUrl =
@@ -31,11 +35,31 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
         };
   }
 
+  public KeycloakJwtTokenParser audience(String expectedAudience) {
+    this.expectedAudience = expectedAudience;
+    return this;
+  }
+
+  public KeycloakJwtTokenParser issuedFor(String expectedIssuedFor) {
+    this.expectedIssuedFor = expectedIssuedFor;
+    return this;
+  }
+
   @Override
   public AccessToken parseToValid(String jwtToken) throws VerificationException {
+    return tokenVerifierFor(jwtToken).verify().getToken();
+  }
+
+  private TokenVerifier<AccessToken> tokenVerifierFor(String jwtToken) {
     TokenVerifier<AccessToken> verifier =
         TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks).publicKey(publicKey);
-    return verifier.verify().getToken();
+    if (expectedAudience != null) {
+      verifier.audience(expectedAudience);
+    }
+    if (expectedIssuedFor != null) {
+      verifier.issuedFor(expectedIssuedFor);
+    }
+    return verifier;
   }
 
   public static KeycloakJwtTokenParser create(String serverUrl, String realm) {

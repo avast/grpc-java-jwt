@@ -4,6 +4,8 @@ import com.avast.grpc.jwt.server.JwtTokenParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URL;
 import java.security.PublicKey;
+
+import com.google.common.base.Strings;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.constants.ServiceUrlConstants;
@@ -15,8 +17,10 @@ import org.keycloak.util.TokenUtil;
 
 public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
 
-  private final PublicKey publicKey;
-  private final TokenVerifier.Predicate<AccessToken>[] checks;
+  protected final PublicKey publicKey;
+  protected final TokenVerifier.Predicate<AccessToken>[] checks;
+  protected String expectedAudience;
+  protected String expectedIssuedFor;
 
   protected KeycloakJwtTokenParser(String serverUrl, String realm, PublicKey publicKey) {
     this.publicKey = publicKey;
@@ -33,9 +37,29 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
 
   @Override
   public AccessToken parseToValid(String jwtToken) throws VerificationException {
-    TokenVerifier<AccessToken> verifier =
-        TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks).publicKey(publicKey);
+    TokenVerifier<AccessToken> verifier = createTokenVerifier(jwtToken);
     return verifier.verify().getToken();
+  }
+
+  protected TokenVerifier<AccessToken> createTokenVerifier(String jwtToken) {
+    TokenVerifier<AccessToken> verifier = TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks).publicKey(publicKey);
+    if (!Strings.isNullOrEmpty(expectedAudience)) {
+      verifier = verifier.audience(expectedAudience);
+    }
+    if (!Strings.isNullOrEmpty(expectedIssuedFor)) {
+      verifier = verifier.issuedFor(expectedIssuedFor);
+    }
+    return verifier;
+  }
+
+  public KeycloakJwtTokenParser withExpectedAudience(String expectedAudience) {
+    this.expectedAudience = expectedAudience;
+    return this;
+  }
+
+  public KeycloakJwtTokenParser withExpectedIssuedFor(String expectedIssuedFor) {
+    this.expectedIssuedFor = expectedIssuedFor;
+    return this;
   }
 
   public static KeycloakJwtTokenParser create(String serverUrl, String realm) {

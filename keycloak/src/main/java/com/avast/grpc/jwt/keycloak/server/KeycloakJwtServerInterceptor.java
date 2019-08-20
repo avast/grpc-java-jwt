@@ -14,7 +14,8 @@ public class KeycloakJwtServerInterceptor extends JwtServerInterceptor<AccessTok
 
   public static KeycloakJwtServerInterceptor fromConfig(Config config) {
     Config fc = config.withFallback(DefaultConfig);
-    KeycloakJwtTokenParser tokenParser = KeycloakJwtTokenParser.create(fc.getString("serverUrl"), fc.getString("realm"));
+    KeycloakJwtTokenParser tokenParser =
+        KeycloakJwtTokenParser.create(fc.getString("serverUrl"), fc.getString("realm"));
     tokenParser = tokenParser.withExpectedAudience(fc.getString("expectedAudience"));
     tokenParser = tokenParser.withExpectedIssuedFor(fc.getString("expectedIssuedFor"));
     return new KeycloakJwtServerInterceptor(tokenParser);

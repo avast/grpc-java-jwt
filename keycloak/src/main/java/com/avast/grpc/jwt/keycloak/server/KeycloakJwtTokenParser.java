@@ -1,30 +1,25 @@
 package com.avast.grpc.jwt.keycloak.server;
 
 import com.avast.grpc.jwt.server.JwtTokenParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import java.net.URL;
-import java.security.PublicKey;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.constants.ServiceUrlConstants;
-import org.keycloak.jose.jwk.JSONWebKeySet;
-import org.keycloak.jose.jwk.JWK;
-import org.keycloak.jose.jwk.JWKParser;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.util.TokenUtil;
 
 public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
 
-  protected final PublicKey publicKey;
+  protected final KeycloakPublicKeyProvider publicKeyProvider;
   protected final TokenVerifier.Predicate<AccessToken>[] checks;
   protected String expectedAudience;
   protected String expectedIssuedFor;
 
-  protected KeycloakJwtTokenParser(String serverUrl, String realm, PublicKey publicKey) {
-    this.publicKey = publicKey;
+  public KeycloakJwtTokenParser(
+      String serverUrl, String realm, KeycloakPublicKeyProvider publicKeyProvider) {
+    this.publicKeyProvider = publicKeyProvider;
     String realmUrl =
         serverUrl + ServiceUrlConstants.REALM_INFO_PATH.replace("{realm-name}", realm);
     this.checks =
@@ -38,7 +33,14 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
 
   @Override
   public CompletableFuture<AccessToken> parseToValid(String jwtToken) {
-    TokenVerifier<AccessToken> verifier = createTokenVerifier(jwtToken);
+    TokenVerifier<AccessToken> verifier;
+    try {
+      verifier = createTokenVerifier(jwtToken);
+    } catch (VerificationException e) {
+      CompletableFuture<AccessToken> r = new CompletableFuture<>();
+      r.completeExceptionally(e);
+      return r;
+    }
     return CompletableFuture.supplyAsync(
         () -> {
           try {
@@ -49,15 +51,17 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
         });
   }
 
-  protected TokenVerifier<AccessToken> createTokenVerifier(String jwtToken) {
+  protected TokenVerifier<AccessToken> createTokenVerifier(String jwtToken)
+      throws VerificationException {
     TokenVerifier<AccessToken> verifier =
-        TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks).publicKey(publicKey);
+        TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks);
     if (!Strings.isNullOrEmpty(expectedAudience)) {
       verifier = verifier.audience(expectedAudience);
     }
     if (!Strings.isNullOrEmpty(expectedIssuedFor)) {
       verifier = verifier.issuedFor(expectedIssuedFor);
     }
+    verifier.publicKey(publicKeyProvider.get(verifier.getHeader().getKeyId()));
     return verifier;
   }
 
@@ -69,21 +73,5 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
   public KeycloakJwtTokenParser withExpectedIssuedFor(String expectedIssuedFor) {
     this.expectedIssuedFor = expectedIssuedFor;
     return this;
-  }
-
-  public static KeycloakJwtTokenParser create(String serverUrl, String realm) {
-    try {
-      ObjectMapper om = new ObjectMapper();
-      String jwksUrl = serverUrl + ServiceUrlConstants.JWKS_URL.replace("{realm-name}", realm);
-      JSONWebKeySet jwks = om.readValue(new URL(jwksUrl).openStream(), JSONWebKeySet.class);
-      if (jwks.getKeys().length == 0) {
-        throw new RuntimeException("No keys found");
-      }
-      JWK jwk = jwks.getKeys()[0];
-      PublicKey publicKey = JWKParser.create(jwk).toPublicKey();
-      return new KeycloakJwtTokenParser(serverUrl, realm, publicKey);
-    } catch (Exception e) {
-      throw new RuntimeException("Exception when obtaining public key from " + serverUrl, e);
-    }
   }
 }

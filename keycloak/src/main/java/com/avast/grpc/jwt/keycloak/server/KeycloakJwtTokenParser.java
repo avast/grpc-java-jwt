@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import java.net.URL;
 import java.security.PublicKey;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.constants.ServiceUrlConstants;
@@ -35,9 +37,16 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
   }
 
   @Override
-  public AccessToken parseToValid(String jwtToken) throws VerificationException {
+  public CompletableFuture<AccessToken> parseToValid(String jwtToken) {
     TokenVerifier<AccessToken> verifier = createTokenVerifier(jwtToken);
-    return verifier.verify().getToken();
+    return CompletableFuture.supplyAsync(
+        () -> {
+          try {
+            return verifier.verify().getToken();
+          } catch (VerificationException e) {
+            throw new CompletionException(e);
+          }
+        });
   }
 
   protected TokenVerifier<AccessToken> createTokenVerifier(String jwtToken) {

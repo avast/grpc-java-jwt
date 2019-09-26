@@ -37,19 +37,35 @@ public class JwtServerInterceptor<T> implements ServerInterceptor {
       call.close(Status.UNAUTHENTICATED.withDescription(msg), new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }
-    T token;
+    DelayedServerCallListener<ReqT> delayedListener = new DelayedServerCallListener<ReqT>();
     try {
-      token = tokenParser.parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()));
+      tokenParser
+          .parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()))
+          .whenComplete(
+              (token, e) -> {
+                if (e == null) {
+                  delayedListener.setDelegate(
+                      Contexts.interceptCall(
+                          Context.current().withValue(AccessTokenContextKey, token),
+                          call,
+                          headers,
+                          next));
+                } else {
+                  delayedListener.setDelegate(handleException(e, call));
+                }
+              });
     } catch (Exception e) {
-      String msg =
-          Constants.AuthorizationMetadataKey.name()
-              + " header validation failed: "
-              + e.getMessage();
-      LOGGER.warn(msg, e);
-      call.close(Status.UNAUTHENTICATED.withDescription(msg).withCause(e), new Metadata());
-      return new ServerCall.Listener<ReqT>() {};
+      return handleException(e, call);
     }
-    return Contexts.interceptCall(
-        Context.current().withValue(AccessTokenContextKey, token), call, headers, next);
+    return delayedListener;
+  }
+
+  private <ReqT, RespT> ServerCall.Listener<ReqT> handleException(
+      Throwable e, ServerCall<ReqT, RespT> call) {
+    String msg =
+        Constants.AuthorizationMetadataKey.name() + " header validation failed: " + e.getMessage();
+    LOGGER.warn(msg, e);
+    call.close(Status.UNAUTHENTICATED.withDescription(msg).withCause(e), new Metadata());
+    return new ServerCall.Listener<ReqT>() {};
   }
 }

@@ -36,30 +36,32 @@ public class KeycloakTest {
             .addService(ServerInterceptors.intercept(service, serverInterceptor))
             .build()
             .start();
-
-    TestServices.AddResponse sum =
-        client.add(TestServices.AddParams.newBuilder().setA(1).setB(2).build());
-
-    assertEquals(sum.getSum(), 3);
-    assertEquals(service.lastAccessToken.getType(), "Bearer");
+    try {
+      TestServices.AddResponse sum =
+          client.add(TestServices.AddParams.newBuilder().setA(1).setB(2).build());
+      assertEquals(sum.getSum(), 3);
+      assertEquals(service.lastAccessToken.getType(), "Bearer");
+    } finally {
+      server.shutdownNow();
+    }
   }
 
   @Test
   public void rejectsRequestWithoutHeader() throws IOException {
     TestServiceGrpc.TestServiceBlockingStub client = TestServiceGrpc.newBlockingStub(clientChannel);
-
     Server server =
         InProcessServerBuilder.forName(channelName)
             .addService(ServerInterceptors.intercept(service, serverInterceptor))
             .build()
             .start();
-
     try {
       TestServices.AddResponse sum =
           client.add(TestServices.AddParams.newBuilder().setA(1).setB(2).build());
     } catch (StatusRuntimeException e) {
       assertFalse(e.getStatus().isOk());
       assertEquals(Status.UNAUTHENTICATED.getCode(), e.getStatus().getCode());
+    } finally {
+      server.shutdownNow();
     }
   }
 }

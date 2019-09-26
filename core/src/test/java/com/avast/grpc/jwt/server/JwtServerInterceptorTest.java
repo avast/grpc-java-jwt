@@ -8,20 +8,20 @@ import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 
 public class JwtServerInterceptorTest {
 
   JwtTokenParser<String> jwtTokenParser =
-      jwtToken ->
-          CompletableFuture.supplyAsync(
-              () -> {
-                if (jwtToken.equals("Invalid Token"))
-                  throw new CompletionException(new RuntimeException("invalid token"));
-                return jwtToken;
-              });
+      jwtToken -> {
+        if (jwtToken.equals("Invalid Token")) {
+          CompletableFuture<String> res = new CompletableFuture<>();
+          res.completeExceptionally(new RuntimeException("invalid token"));
+          return res;
+        }
+        return CompletableFuture.completedFuture(jwtToken);
+      };
   JwtServerInterceptor<String> target = new JwtServerInterceptor<>(jwtTokenParser);
   ServerCall<Object, Object> serverCall = (ServerCall<Object, Object>) mock(ServerCall.class);
   ServerCallHandler<Object, Object> next =

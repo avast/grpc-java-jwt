@@ -37,23 +37,26 @@ public class JwtServerInterceptor<T> implements ServerInterceptor {
       call.close(Status.UNAUTHENTICATED.withDescription(msg), new Metadata());
       return new ServerCall.Listener<ReqT>() {};
     }
-    DelayedServerCallListener<ReqT> delayedListener = new DelayedServerCallListener<ReqT>();
+    DelayedServerCallListener<ReqT> delayedListener = new DelayedServerCallListener<>();
+    Context context = Context.current(); // we must call this on the right thread
     try {
       tokenParser
           .parseToValid(authHeader.substring(AUTH_HEADER_PREFIX.length()))
           .whenComplete(
-              (token, e) -> {
-                if (e == null) {
-                  delayedListener.setDelegate(
-                      Contexts.interceptCall(
-                          Context.current().withValue(AccessTokenContextKey, token),
-                          call,
-                          headers,
-                          next));
-                } else {
-                  delayedListener.setDelegate(handleException(e, call));
-                }
-              });
+              (token, e) ->
+                  context.run(
+                      () -> {
+                        if (e == null) {
+                          delayedListener.setDelegate(
+                              Contexts.interceptCall(
+                                  Context.current().withValue(AccessTokenContextKey, token),
+                                  call,
+                                  headers,
+                                  next));
+                        } else {
+                          delayedListener.setDelegate(handleException(e, call));
+                        }
+                      }));
     } catch (Exception e) {
       return handleException(e, call);
     }

@@ -7,12 +7,21 @@ import com.avast.grpc.jwt.Constants;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 
 public class JwtServerInterceptorTest {
 
-  JwtTokenParser<String> jwtTokenParser = jwtToken -> jwtToken;
+  JwtTokenParser<String> jwtTokenParser =
+      jwtToken -> {
+        if (jwtToken.equals("Invalid Token")) {
+          CompletableFuture<String> res = new CompletableFuture<>();
+          res.completeExceptionally(new RuntimeException("invalid token"));
+          return res;
+        }
+        return CompletableFuture.completedFuture(jwtToken);
+      };
   JwtServerInterceptor<String> target = new JwtServerInterceptor<>(jwtTokenParser);
   ServerCall<Object, Object> serverCall = (ServerCall<Object, Object>) mock(ServerCall.class);
   ServerCallHandler<Object, Object> next =
@@ -29,6 +38,15 @@ public class JwtServerInterceptorTest {
   public void closesCallOnInvalidHeader() {
     Metadata metadata = new Metadata();
     metadata.put(Constants.AuthorizationMetadataKey, "Bbb");
+    target.interceptCall(serverCall, metadata, next);
+    verify(serverCall).close(any(), any());
+    verify(next, never()).startCall(any(), any());
+  }
+
+  @Test
+  public void closesCallOnInvalidToken() {
+    Metadata metadata = new Metadata();
+    metadata.put(Constants.AuthorizationMetadataKey, "Bearer Invalid Token");
     target.interceptCall(serverCall, metadata, next);
     verify(serverCall).close(any(), any());
     verify(next, never()).startCall(any(), any());

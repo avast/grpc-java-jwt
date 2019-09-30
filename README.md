@@ -48,7 +48,6 @@ YourService.newStub(aChannel).withCallCredentials(callCredentials);
 
 ### Server usage
 This ensures that only requests with valid `JWT` in `Authorization` header are processed.
- The `fromConfig` method automatically downloads the Keycloak public key before the instance is actually created.
 ```java
 import io.grpc.ServerServiceDefinition;
 import com.avast.grpc.jwt.keycloak.server.KeycloakJwtServerInterceptor;
@@ -78,4 +77,4 @@ On other hand, `Context key` is set of values that are available during request 
  
 So when implementing interceptors, you must be sure that you read Context values from the right thread. It's actually no issue for us because:
 1. The right thread is automatically handled by gRPC-core when using`CallCredentials`. So you can call `applier.apply()` method on any thread.
-2. Our `ServerInterceptor` implementation is fully synchronous.
+2. Our `ServerInterceptor` implementation handles it correctly.

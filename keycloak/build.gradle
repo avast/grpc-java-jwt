@@ -27,7 +27,7 @@ dependencies {
     compile project(':core')
     compile 'org.keycloak:keycloak-admin-client:7.0.1'
     compile 'org.jboss.resteasy:resteasy-client:3.7.0.Final'
-    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.7.0.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.9.1.Final'
     compile 'com.typesafe:config:1.4.0'
 
     testCompile "com.google.protobuf:protobuf-java:$protobufVersion"

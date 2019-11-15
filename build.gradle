@@ -41,6 +41,13 @@ subprojects {
         archives sourcesJar
     }
 
+    test {
+        testLogging {
+            events 'failed'
+            exceptionFormat 'full'
+        }
+    }
+
     bintray {
         user = System.getenv('BINTRAY_USER')
         key = System.getenv('BINTRAY_KEY')

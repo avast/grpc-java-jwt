@@ -1,7 +1,7 @@
 plugins {
     id 'com.github.sherter.google-java-format' version '0.8' apply false
     id 'com.google.protobuf' version '0.8.10' apply false
-    id 'com.avast.gradle.docker-compose' version '0.10.5' apply false
+    id 'com.avast.gradle.docker-compose' version '0.10.7' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 

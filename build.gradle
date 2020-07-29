@@ -12,7 +12,7 @@ allprojects {
 
 ext {
     grpcVersion = '1.30.2'
-    protobufVersion = '3.12.2'
+    protobufVersion = '3.12.4'
 }
 
 subprojects {

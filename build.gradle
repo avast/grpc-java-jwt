@@ -29,7 +29,7 @@ subprojects {
     
     dependencies {
         testCompile 'junit:junit:4.13'
-        testCompile 'org.mockito:mockito-core:3.4.6'
+        testCompile 'org.mockito:mockito-core:3.5.0'
     }
 
     task sourcesJar(type: Jar) {

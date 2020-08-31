@@ -25,7 +25,7 @@ protobuf {
 
 dependencies {
     compile project(':core')
-    compile 'org.keycloak:keycloak-admin-client:11.0.1'
+    compile 'org.keycloak:keycloak-admin-client:11.0.2'
     compile 'org.bouncycastle:bcprov-jdk16:1.46'
     compile 'com.typesafe:config:1.4.0'
 

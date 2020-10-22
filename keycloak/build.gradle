@@ -27,7 +27,7 @@ dependencies {
     compile project(':core')
     compile 'org.keycloak:keycloak-admin-client:11.0.2'
     compile 'org.bouncycastle:bcprov-jdk16:1.46'
-    compile 'com.typesafe:config:1.4.0'
+    compile 'com.typesafe:config:1.4.1'
 
     testCompile "com.google.protobuf:protobuf-java:$protobufVersion"
     testCompile "io.grpc:grpc-netty-shaded:$grpcVersion"

@@ -15,9 +15,6 @@ Implementation of standard `CallCredentials` ensures that the header is sent, an
 compile "com.avast.grpc.jwt:grpc-java-jwt:$latestVersion"
 ````
 
-> Please note that all artifacts are published to [Avast Bintray respository](https://bintray.com/avast/maven/grpc-java-jwt)
- which is mirrored to JCenter repository so you must add `https://jcenter.bintray.com/` as your Maven repository.
-
 This base library contains a code that is not tied to any specific JWT implementation. So it requires instances of _JwtTokenProvider_ interface (for client) and [JwtTokenParser](core/src/main/java/com/avast/grpc/jwt/server/JwtTokenParser.java) (for server) to work.
 
 ## Keycloak support

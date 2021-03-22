@@ -1,8 +1,8 @@
 plugins {
     id 'com.github.sherter.google-java-format' version '0.9' apply false
-    id 'com.google.protobuf' version '3.15.4' apply false
+    id 'com.google.protobuf' version '0.8.15' apply false
     id 'com.avast.gradle.docker-compose' version '0.14.0' apply false
-    id 'com.jfrog.bintray' version '1.8.5' apply false
+    id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
 }
 
 allprojects {
@@ -15,11 +15,18 @@ ext {
     protobufVersion = '3.15.3'
 }
 
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
+}
+
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'maven'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
     apply plugin: 'com.github.sherter.google-java-format'
-    apply plugin: 'com.jfrog.bintray'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -32,15 +39,6 @@ subprojects {
         testCompile 'org.mockito:mockito-core:3.8.0'
     }
 
-    task sourcesJar(type: Jar) {
-        from sourceSets.main.allSource
-        archiveClassifier = 'sources'
-    }
-
-    artifacts {
-        archives sourcesJar
-    }
-
     test {
         testLogging {
             events 'failed'
@@ -48,27 +46,49 @@ subprojects {
         }
     }
 
-    bintray {
-        user = System.getenv('BINTRAY_USER')
-        key = System.getenv('BINTRAY_KEY')
-        configurations = ['archives']
-        publish = true
-        pkg {
-            repo = 'maven'
-            name = 'grpc-java-jwt'
-            desc = 'Library that helps with authenticated communication in gRPC-Java based applications. It uses JSON Web Token.'
-            userOrg = 'avast'
-            licenses = ['MIT']
-            vcsUrl = 'https://github.com/avast/grpc-java-jwt.git'
-            websiteUrl = 'https://github.com/avast/grpc-java-jwt'
-            issueTrackerUrl = 'https://github.com/avast/grpc-java-jwt/issues'
-            githubRepo = 'avast/grpc-java-jwt'
-            labels = ['grpc', 'java', 'jwt', 'keycloak']
-            version {
-                name = project.version
-                vcsTag = project.version
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from(components.java)
+                artifactId = archivesBaseName
+                pom {
+                    name = 'gRPC Java JWT'
+                    description = 'JWT based authentication for gRPC-Java'
+                    url = 'https://github.com/avast/grpc-java-jwt'
+                    licenses {
+                        license {
+                            name = 'The MIT License'
+                            url = 'http://www.opensource.org/licenses/mit-license.php'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'augi'
+                            name = 'Michal Augustýn'
+                            email = 'augustyn.michal@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/avast/grpc-java-jwt.git'
+                        developerConnection = 'scm:git:ssh://github.com/avast/grpc-java-jwt.git'
+                        url = 'https://github.com/avast/grpc-java-jwt'
+                    }
+                }
             }
         }
     }
 
+    signing {
+        String base64Key = System.getenv('SIGNING_KEY')
+        if (base64Key) {
+            useInMemoryPgpKeys(new String(Base64.decoder.decode(base64Key)), System.getenv('SIGNING_PASSWORD'))
+            sign publishing.publications
+        }
+    }
 }

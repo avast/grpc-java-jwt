@@ -1,5 +1,4 @@
-# gRPC Java JWT support
-[![Build Status](https://travis-ci.org/avast/grpc-java-jwt.svg?branch=master)](https://travis-ci.org/avast/grpc-java-jwt) [![Download](https://api.bintray.com/packages/avast/maven/grpc-java-jwt/images/download.svg) ](https://bintray.com/avast/maven/grpc-java-jwt/_latestVersion)
+# gRPC Java JWT support [![Build](https://github.com/avast/grpc-java-jwt/actions/workflows/build.yml/badge.svg)](https://github.com/avast/scala-hashes/actions/workflows/build.yml) [![Version](https://badgen.net/maven/v/maven-central/com.avast.grpc.jwt/grpc-java-jwt)](https://repo1.maven.org/maven2/com/avast/grpc/jwt/grpc-java-jwt/)
 
 Library that helps with authenticated communication in gRPC-Java based applications. It uses [JSON Web Token](https://jwt.io/) transported in `Authorization` header (as `Bearer rawJWT`).
 

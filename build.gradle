@@ -52,32 +52,34 @@ subprojects {
         withSourcesJar()
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from(components.java)
-                artifactId = archivesBaseName
-                pom {
-                    name = 'gRPC Java JWT'
-                    description = 'JWT based authentication for gRPC-Java'
-                    url = 'https://github.com/avast/grpc-java-jwt'
-                    licenses {
-                        license {
-                            name = 'The MIT License'
-                            url = 'http://www.opensource.org/licenses/mit-license.php'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'augi'
-                            name = 'Michal Augustýn'
-                            email = 'augustyn.michal@gmail.com'
-                        }
-                    }
-                    scm {
-                        connection = 'scm:git:git://github.com/avast/grpc-java-jwt.git'
-                        developerConnection = 'scm:git:ssh://github.com/avast/grpc-java-jwt.git'
+    afterEvaluate {
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from(components.java)
+                    artifactId = archivesBaseName
+                    pom {
+                        name = 'gRPC Java JWT'
+                        description = 'JWT based authentication for gRPC-Java'
                         url = 'https://github.com/avast/grpc-java-jwt'
+                        licenses {
+                            license {
+                                name = 'The MIT License'
+                                url = 'http://www.opensource.org/licenses/mit-license.php'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id = 'augi'
+                                name = 'Michal Augustýn'
+                                email = 'augustyn.michal@gmail.com'
+                            }
+                        }
+                        scm {
+                            connection = 'scm:git:git://github.com/avast/grpc-java-jwt.git'
+                            developerConnection = 'scm:git:ssh://github.com/avast/grpc-java-jwt.git'
+                            url = 'https://github.com/avast/grpc-java-jwt'
+                        }
                     }
                 }
             }

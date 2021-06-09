@@ -26,7 +26,7 @@ protobuf {
 dependencies {
     api project(':core')
     api 'org.keycloak:keycloak-admin-client:13.0.1'
-    api 'org.bouncycastle:bcprov-jdk15on:1.68'
+    api 'org.bouncycastle:bcprov-jdk15on:1.69'
     api 'com.typesafe:config:1.4.1'
 
     testImplementation "com.google.protobuf:protobuf-java:$protobufVersion"

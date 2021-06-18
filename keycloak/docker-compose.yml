@@ -2,7 +2,7 @@ version: '2'
 
 services:
   keycloak:
-    image: jboss/keycloak:8.0.2
+    image: jboss/keycloak:14.0.0
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin

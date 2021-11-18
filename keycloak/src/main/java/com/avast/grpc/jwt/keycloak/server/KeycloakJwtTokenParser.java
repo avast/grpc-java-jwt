@@ -2,16 +2,15 @@ package com.avast.grpc.jwt.keycloak.server;
 
 import com.avast.grpc.jwt.server.JwtTokenParser;
 import com.google.common.base.Strings;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.stream.Collectors;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.util.TokenUtil;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.stream.Collectors;
 
 public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
 
@@ -21,11 +20,15 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
   protected String expectedIssuedFor;
 
   public KeycloakJwtTokenParser(
-          String serverUrl, String realm, List<String> allowedIssuers, KeycloakPublicKeyProvider publicKeyProvider) {
+      String serverUrl,
+      String realm,
+      List<String> allowedIssuers,
+      KeycloakPublicKeyProvider publicKeyProvider) {
     this.publicKeyProvider = publicKeyProvider;
 
     String suffix = ServiceUrlConstants.REALM_INFO_PATH.replace("{realm-name}", realm);
-    List<String> issuers = allowedIssuers.stream().map(i -> i + suffix).collect(Collectors.toList());
+    List<String> issuers =
+        allowedIssuers.stream().map(i -> i + suffix).collect(Collectors.toList());
     issuers.add(0, serverUrl + suffix);
     this.checks =
         new TokenVerifier.Predicate[] {

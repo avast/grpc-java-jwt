@@ -24,7 +24,10 @@ public class KeycloakJwtServerInterceptor extends JwtServerInterceptor<AccessTok
             Clock.systemUTC());
     KeycloakJwtTokenParser tokenParser =
         new KeycloakJwtTokenParser(
-            fc.getString("serverUrl"), fc.getString("realm"), fc.getStringList("allowedIssuers"), publicKeyProvider);
+            fc.getString("serverUrl"),
+            fc.getString("realm"),
+            fc.getStringList("allowedIssuers"),
+            publicKeyProvider);
     tokenParser = tokenParser.withExpectedAudience(fc.getString("expectedAudience"));
     tokenParser = tokenParser.withExpectedIssuedFor(fc.getString("expectedIssuedFor"));
     return new KeycloakJwtServerInterceptor(tokenParser);

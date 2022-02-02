@@ -27,7 +27,7 @@ dependencies {
     api project(':core')
     api 'org.keycloak:keycloak-admin-client:16.1.1'
     api 'org.bouncycastle:bcprov-jdk15on:1.70'
-    api 'com.typesafe:config:1.4.1'
+    api 'com.typesafe:config:1.4.2'
 
     testImplementation "com.google.protobuf:protobuf-java:$protobufVersion"
     testImplementation "io.grpc:grpc-netty-shaded:$grpcVersion"

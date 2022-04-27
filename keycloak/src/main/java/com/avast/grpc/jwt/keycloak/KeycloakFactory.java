@@ -6,11 +6,15 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 
 public final class KeycloakFactory {
-  public static Config DefaultConfig =
-      ConfigFactory.defaultReference().getConfig("keycloakDefaults");
+
+  public static final String KEYCLOAK_DEFAULTS_CONFIG_NAME = "keycloakDefaults";
 
   public static Keycloak fromConfig(Config config) {
-    Config fc = config.withFallback(DefaultConfig);
+    return fromConfig(config, Thread.currentThread().getContextClassLoader());
+  }
+
+  public static Keycloak fromConfig(Config config, ClassLoader contextClassLoader) {
+    Config fc = config.withFallback(getDefaultConfig(contextClassLoader));
     return KeycloakBuilder.builder()
         .clientId(fc.getString("clientId"))
         .clientSecret(fc.getString("clientSecret"))
@@ -20,6 +24,10 @@ public final class KeycloakFactory {
         .realm(fc.getString("realm"))
         .serverUrl(fc.getString("serverUrl"))
         .build();
+  }
+
+  public static Config getDefaultConfig(final ClassLoader classLoader) {
+    return ConfigFactory.defaultReference(classLoader).getConfig(KEYCLOAK_DEFAULTS_CONFIG_NAME);
   }
 
   private KeycloakFactory() {}

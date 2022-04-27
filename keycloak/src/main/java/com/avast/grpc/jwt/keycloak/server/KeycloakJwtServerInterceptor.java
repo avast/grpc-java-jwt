@@ -1,6 +1,6 @@
 package com.avast.grpc.jwt.keycloak.server;
 
-import static com.avast.grpc.jwt.keycloak.KeycloakFactory.DefaultConfig;
+import static com.avast.grpc.jwt.keycloak.KeycloakFactory.getDefaultConfig;
 
 import com.avast.grpc.jwt.server.JwtServerInterceptor;
 import com.avast.grpc.jwt.server.JwtTokenParser;
@@ -14,7 +14,12 @@ public class KeycloakJwtServerInterceptor extends JwtServerInterceptor<AccessTok
   }
 
   public static KeycloakJwtServerInterceptor fromConfig(Config config) {
-    Config fc = config.withFallback(DefaultConfig);
+    return fromConfig(config, Thread.currentThread().getContextClassLoader());
+  }
+
+  public static KeycloakJwtServerInterceptor fromConfig(
+      Config config, ClassLoader contextClassLoader) {
+    Config fc = config.withFallback(getDefaultConfig(contextClassLoader));
     KeycloakPublicKeyProvider publicKeyProvider =
         new DefaultKeycloakPublicKeyProvider(
             fc.getString("serverUrl"),

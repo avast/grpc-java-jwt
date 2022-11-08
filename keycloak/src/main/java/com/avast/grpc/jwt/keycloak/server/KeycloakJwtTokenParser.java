@@ -1,11 +1,11 @@
 package com.avast.grpc.jwt.keycloak.server;
 
 import com.avast.grpc.jwt.server.JwtTokenParser;
-import com.google.common.base.Strings;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
+
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.constants.ServiceUrlConstants;
@@ -63,10 +63,10 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
       throws VerificationException {
     TokenVerifier<AccessToken> verifier =
         TokenVerifier.create(jwtToken, AccessToken.class).withChecks(checks);
-    if (!Strings.isNullOrEmpty(expectedAudience)) {
+    if (expectedAudience != null && !expectedAudience.isEmpty()) {
       verifier = verifier.audience(expectedAudience);
     }
-    if (!Strings.isNullOrEmpty(expectedIssuedFor)) {
+    if (expectedIssuedFor != null && !expectedIssuedFor.isEmpty()) {
       verifier = verifier.issuedFor(expectedIssuedFor);
     }
     verifier.publicKey(publicKeyProvider.get(verifier.getHeader().getKeyId()));

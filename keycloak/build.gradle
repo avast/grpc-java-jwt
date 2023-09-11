@@ -38,6 +38,6 @@ dependencies {
 }
 
 idea.module {
-    sourceDirs += file("$buildDir/generated/source/proto/main/java")
-    sourceDirs += file("$buildDir/generated/source/proto/main/grpc")
+    sourceDirs += file("${layout.buildDirectory}/generated/source/proto/main/java")
+    sourceDirs += file("${layout.buildDirectory}/generated/source/proto/main/grpc")
 }

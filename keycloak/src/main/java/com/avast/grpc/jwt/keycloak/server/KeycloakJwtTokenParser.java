@@ -1,6 +1,8 @@
 package com.avast.grpc.jwt.keycloak.server;
 
 import com.avast.grpc.jwt.server.JwtTokenParser;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -34,7 +36,7 @@ public class KeycloakJwtTokenParser implements JwtTokenParser<AccessToken> {
         new TokenVerifier.Predicate[] {
           new IssuersCheck(issuers.toArray(new String[0])),
           TokenVerifier.SUBJECT_EXISTS_CHECK,
-          new TokenVerifier.TokenTypeCheck(TokenUtil.TOKEN_TYPE_BEARER),
+          new TokenVerifier.TokenTypeCheck(Collections.singletonList(TokenUtil.TOKEN_TYPE_BEARER)),
           TokenVerifier.IS_ACTIVE
         };
   }

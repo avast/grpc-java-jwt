@@ -4,8 +4,8 @@ services:
   keycloak:
     image: keycloak/keycloak:23.0.4
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
       - KEYCLOAK_IMPORT=/tmp/test-realm.json
     volumes:
       - ./test-realm.json:/tmp/test-realm.json

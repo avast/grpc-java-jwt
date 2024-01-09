@@ -6,8 +6,10 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KEYCLOAK_IMPORT=/tmp/test-realm.json
+    command:
+      - "start-dev"
+      - "--import-realm"
     volumes:
-      - ./test-realm.json:/tmp/test-realm.json
+      - ./test-realm.json:/opt/keycloak/data/import/test-realm.json
     ports:
       - "8080"

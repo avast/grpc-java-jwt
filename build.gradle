@@ -11,7 +11,7 @@ allprojects {
 
 ext {
     grpcVersion = '1.62.2'
-    protobufVersion = '4.26.0'
+    protobufVersion = '4.26.1'
 }
 
 nexusPublishing {

@@ -1,7 +1,7 @@
 plugins {
     id 'com.google.protobuf' version '0.9.5' apply false
     id 'com.avast.gradle.docker-compose' version '0.17.12' apply false
-    id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
+    id 'org.jreleaser' version '1.18.0'
 }
 
 allprojects {
@@ -14,17 +14,11 @@ ext {
     protobufVersion = '3.25.7'
 }
 
-nexusPublishing {
-    repositories {
-        sonatype()
-    }
-}
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'signing'
+    apply plugin: 'org.jreleaser'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -81,14 +75,42 @@ subprojects {
                     }
                 }
             }
+            repositories {
+                maven {
+                    url = layout.buildDirectory.dir('staging-deploy')
+                }
+            }
         }
     }
 
-    signing {
-        String base64Key = System.getenv('SIGNING_KEY')
-        if (base64Key) {
-            useInMemoryPgpKeys(new String(Base64.decoder.decode(base64Key)), System.getenv('SIGNING_PASSWORD'))
-            sign publishing.publications
+    jreleaser {
+        signing {
+            active = 'ALWAYS'
+            armored = true
+            String base64Key = System.getenv('SIGNING_KEY')
+            if (base64Key) {
+                secretKey = new String(Base64.decoder.decode(base64Key))
+            }
+            String base64PublicKey = System.getenv('SIGNING_PUBLIC_KEY')
+            if (base64PublicKey) {
+                publicKey = new String(Base64.decoder.decode(base64PublicKey))
+            }
+        }
+        deploy {
+            maven {
+                mavenCentral {
+                    sonatype {
+                        active = 'ALWAYS'
+                        url = 'https://central.sonatype.com/api/v1/publisher'
+                        stagingRepository('build/staging-deploy')
+                    }
+                }
+            }
+        }
+        release {
+            github {
+                enabled = false
+            }
         }
     }
 }

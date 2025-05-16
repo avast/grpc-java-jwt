@@ -41,8 +41,3 @@ dependencies {
     testImplementation "io.grpc:grpc-protobuf:$grpcVersion"
     testImplementation "io.grpc:grpc-stub:$grpcVersion"
 }
-
-idea.module {
-    sourceDirs += file("${layout.buildDirectory}/generated/source/proto/main/java")
-    sourceDirs += file("${layout.buildDirectory}/generated/source/proto/main/grpc")
-}

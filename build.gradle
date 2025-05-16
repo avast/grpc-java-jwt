@@ -14,7 +14,7 @@ ext {
     protobufVersion = '3.25.7'
 }
 
-task clean {}
+tasks.register('clean') {}
 
 subprojects {
     apply plugin: 'java'

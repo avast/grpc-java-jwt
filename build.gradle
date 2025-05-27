@@ -11,7 +11,7 @@ allprojects {
 
 ext {
     grpcVersion = '1.73.0'
-    protobufVersion = '3.25.7'
+    protobufVersion = '3.25.8'
 }
 
 tasks.register('clean') {}

@@ -2,7 +2,7 @@ version: '2'
 
 services:
   keycloak:
-    image: keycloak/keycloak:26.2.4
+    image: keycloak/keycloak:26.2.5
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin

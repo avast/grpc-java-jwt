@@ -22,8 +22,6 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'org.jreleaser'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-
     repositories {
         mavenCentral()
     }

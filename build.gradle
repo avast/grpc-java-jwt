@@ -1,7 +1,7 @@
 plugins {
     id 'com.google.protobuf' version '0.9.5' apply false
     id 'com.avast.gradle.docker-compose' version '0.17.12' apply false
-    id 'org.jreleaser' version '1.19.0'
+    id 'org.jreleaser' version '1.20.0'
 }
 
 allprojects {

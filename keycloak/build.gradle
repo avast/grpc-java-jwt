@@ -3,7 +3,10 @@ plugins {
     id 'com.google.protobuf'
     id 'idea'
 }
-archivesBaseName = 'grpc-java-jwt-keycloak'
+
+tasks.jar.configure {
+    archiveBaseName.set('grpc-java-jwt-keycloak')
+}
 
 dockerCompose.isRequiredBy(test)
 

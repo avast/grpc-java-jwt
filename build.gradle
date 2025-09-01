@@ -49,7 +49,7 @@ subprojects {
             publications {
                 mavenJava(MavenPublication) {
                     from(components.java)
-                    artifactId = archivesBaseName
+                    artifactId = tasks.jar.archiveBaseName.get()
                     pom {
                         name = 'gRPC Java JWT'
                         description = 'JWT based authentication for gRPC-Java'

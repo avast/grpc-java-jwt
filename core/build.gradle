@@ -1,4 +1,6 @@
-archivesBaseName = 'grpc-java-jwt'
+tasks.jar.configure {
+    archiveBaseName.set('grpc-java-jwt')
+}
 
 dependencies {
     api "io.grpc:grpc-core:$grpcVersion"

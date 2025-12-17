@@ -1,5 +1,5 @@
 plugins {
-    id 'com.google.protobuf' version '0.9.5' apply false
+    id 'com.google.protobuf' version '0.9.6' apply false
     id 'com.avast.gradle.docker-compose' version '0.17.20' apply false
     id 'org.jreleaser' version '1.21.0'
 }

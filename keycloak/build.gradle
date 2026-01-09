@@ -27,7 +27,7 @@ protobuf {
 }
 
 ext {
-    keycloakClientVersion = '25.0.6'
+    keycloakClientVersion = '26.0.8'
 }
 
 dependencies {
